@@ -15,6 +15,7 @@ var dailyBulletin = require(__dirname + '/libs/dailyBulletin.js');
 var later         = require('later');
 var MongoClient   = require('mongodb').MongoClient;
 var weather       = require(__dirname + '/libs/weather.js');
+var portal       = require(__dirname + '/libs/portal.js');
 
 // Only run these intervals in production so we don't waste our API calls
 if(config.production) {
@@ -83,6 +84,12 @@ if(config.production) {
 			});
 
 		}, fiveMinuteInterval);
+
+		var groupClasses = later.setInterval(function() {
+			console.log('grouping classes');
+			// TODO modify get calendar function to cache the calendar info (json format) in our db. 
+			// portal.getClasses();
+		})
 	});
 } else {
 	console.log('Not starting tasks server because we are not on production.');
