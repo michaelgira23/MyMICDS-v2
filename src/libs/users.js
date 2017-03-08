@@ -219,7 +219,7 @@ function gradYearToGrade(gradYear) {
 	var grade = 12 + differenceYears;
 
 	// If last day of school has already passed, you completed a grade of school
-	var schoolEnd = lastFridayMay();
+	var schoolEnd = dates.lastFridayMay();
 	if(current.isAfter(schoolEnd)) {
 		grade++;
 	}
@@ -241,7 +241,7 @@ function gradeToGradYear(grade) {
 	var current = moment();
 
 	// If last day of school has already passed, round year down
-	var schoolEnd = lastFridayMay();
+	var schoolEnd = dates.lastFridayMay();
 	if(current.isAfter(schoolEnd)) {
 		grade--;
 	}

@@ -64,6 +64,25 @@ function schoolEnds() {
 }
 
 /**
+ * Returns an array containing the school years of a given date
+ * @function getSchoolYear
+ * @param {Object} date - Date object
+ * @returns {Object}
+ */
+
+function getSchoolYear(date) {
+	date = moment(date);
+	var lastDayThisYear = lastFridayMay(date.year());
+
+	// If after summer, include next year. Otherwise, include last year
+	if(date.isAfter(lastDayThisYear)) {
+		return [date.year(), date.year() + 1];
+	} else {
+		return [date.year() - 1, date.year()];
+	}
+}
+
+/**
  * Returns the upcoming breaks and long weekends within the next 12 months
  * @function getDaysOff
  * @callback {getDaysOffCallback} callback - Callback
@@ -220,5 +239,7 @@ function getBreaks(callback) {
 	});
 }
 
-module.exports.schoolEnds = schoolEnds;
-module.exports.getBreaks = getBreaks;
+module.exports.lastFridayMay = lastFridayMay;
+module.exports.schoolEnds    = schoolEnds;
+module.exports.getSchoolYear = getSchoolYear;
+module.exports.getBreaks     = getBreaks;
