@@ -562,6 +562,56 @@ function cleanUp(str) {
 	return str.replace(cleanUpBlockSuffix, '');
 }
 
+/**
+ * Get students that belongs to the same portal class
+ * @function getUsersInClass
+ *
+ * @param {Object} db - Database object
+ * @param {string} user - Username
+ * @param {getUsersInClassCallback} callback - callback containing class information
+ */
+/**
+ * @callback getUsersInClassCallback
+ *
+ * @param {Object} err - Null if success, error object if failure.
+ * @param {Array} classes - Object containing an array of users in the class
+ */
+function findClassesByUser(db, user, callback) {
+	if (typeof db !== 'object') return callback(new Error('db connection incorrect'), null);
+	if (typeof user !=='string') return callback(new Error('user info incorrect'), null);
+
+	var userClass = db.collection('usersClass');
+	var result = {};
+	// find all the portal classes that contains the user name
+	userClass.find({ user: user }).toArray(function(err, attendingClasses) {
+		if (err) {
+			callback(new Error(err), null);
+			return;
+		}
+
+		result = attendingClasses.map(function(userClassDoc) {
+			// find all the other users in the same portal classes
+			userClass.find({ classStr: userClassDoc.classStr }).toArray(function(err, classmates) {
+				if (err) {
+					callback(new Error(err), null);
+					return;
+				}
+
+				return {
+					classStr: userClassDoc.classStr,
+					classmates: classmates.map(function(userClassDoc) {
+						users.get(db, userClassDoc.username, function(user) {
+							return user;
+						});
+					})
+				};
+			});
+		});
+
+		callback(null, result);
+	});
+}
+
 // RegEx
 module.exports.validDayRotation   = validDayRotation;
 module.exports.portalSummaryBlock = portalSummaryBlock;
@@ -577,3 +627,4 @@ module.exports.getDayRotation  = getDayRotation;
 module.exports.getDayRotations = getDayRotations;
 module.exports.getClasses      = getClasses;
 module.exports.cleanUp         = cleanUp;
+module.exports.findClassesByUser = findClassesByUser;

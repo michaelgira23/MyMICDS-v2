@@ -67,4 +67,12 @@ module.exports = function(app, db, socketIO) {
 		});
 	});
 
-}
+	app.post('/portal/class-groups', function(req, res) {
+		portal.findClassesByUser(db, req.user.user, function(err, classes) {
+			res.json({
+				error: err ? err.message : null,
+				classes: classes
+			});
+		});
+	});
+};

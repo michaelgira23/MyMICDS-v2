@@ -11,31 +11,31 @@ var portal = require(__dirname + '/../libs/portal.js');
 
 try {
 	MongoClient.connect(config.mongodb.uri, function (err, db) {
-		if (err) throw err;
+		if (err) throw new Error(err);
 
 		var usersClasses = db.collection('usersClasses');
 		var users = db.collection('users');
 
 		users.find({}, {user: true}).toArray(function (err, docs) {
-			if (err) throw err;
+			if (err) throw new Error(err);
 
 			docs.forEach(function (userDoc) {
 				portal.getClasses(db, userDoc.user, function (err, hasUrl, classes) {
-					if (err) throw err;
+					if (err) throw new Error(err);
 
 					if (hasUrl) {
 						usersClasses.insertMany(
 							// map the array of classes into insert-able documents for Mongo
 							classes.map(function (classStr) {
 								return {
-									user: userDoc._id,
+									username: userDoc.user,
+									userId: userDoc._id,
 									classStr: classStr
 								}
 							}),
 							function (err, result) {
-								if (err) throw err;
-
-								if (result.ok === 1) {
+								if (err) throw new Error(err);
+								if (result.result.ok === 1) {
 									console.log('Success');
 								}
 							}
