@@ -56,6 +56,43 @@ function getUser(db, user, callback) {
 }
 
 /**
+ * Like getUser, but using the document id
+ * @function getUserById
+ *
+ * @param {Object} db - Database connection
+ * @param {string} userId - User datbase id
+ * @param {getUserCallback} callback - Callback
+ */
+
+function getUserById(db, userId, callback) {
+	if(typeof callback !== 'function') return;
+
+	if(typeof db !== 'object') {
+		callback(new Error('Invalid databse connection!'), null, null);
+		return;
+	}
+	if(typeof userId !== 'object') {
+		callback(new Error('Invalid user id!'), null, null);
+		return;
+	}
+
+	var userdata = db.collection('users');
+	// Query database to find possible user
+	userdata.find({ _id: userId }).toArray(function(err, docs) {
+		if(err) {
+			callback(new Error('There was a problem querying the database!'), null, null);
+			return;
+		}
+		if(docs.length === 0) {
+			callback(null, false, null)
+		} else {
+			callback(null, true, docs[0]);
+		}
+
+	});
+}
+
+/**
  * Retrieves basic information about a specific user
  * @function getInfo
  *
@@ -267,6 +304,7 @@ function gradeToSchool(grade) {
 }
 
 module.exports.get        	   = getUser;
+module.exports.getById         = getUserById;
 module.exports.getInfo         = getInfo;
 module.exports.changeInfo      = changeInfo;
 module.exports.gradYearToGrade = gradYearToGrade;

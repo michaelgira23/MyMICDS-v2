@@ -13,8 +13,9 @@ try {
 	MongoClient.connect(config.mongodb.uri, function (err, db) {
 		if (err) throw new Error(err);
 
-		var usersClasses = db.collection('usersClasses');
+		var portalClasses = db.collection('portalClasses');
 		var users = db.collection('users');
+		var docsCount = 0;
 
 		users.find({}, {user: true}).toArray(function (err, docs) {
 			if (err) throw new Error(err);
@@ -24,19 +25,19 @@ try {
 					if (err) throw new Error(err);
 
 					if (hasUrl) {
-						usersClasses.insertMany(
+						portalClasses.insertMany(
 							// map the array of classes into insert-able documents for Mongo
 							classes.map(function (classStr) {
 								return {
-									username: userDoc.user,
 									userId: userDoc._id,
 									classStr: classStr
 								}
 							}),
 							function (err, result) {
 								if (err) throw new Error(err);
+								docsCount++;
 								if (result.result.ok === 1) {
-									console.log('Success');
+									process.stdout.write(`\r inserted ${docsCount} \r`);
 								}
 							}
 						);

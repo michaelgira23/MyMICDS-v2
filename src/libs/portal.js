@@ -580,35 +580,70 @@ function findClassesByUser(db, user, callback) {
 	if (typeof db !== 'object') return callback(new Error('db connection incorrect'), null);
 	if (typeof user !=='string') return callback(new Error('user info incorrect'), null);
 
-	var userClass = db.collection('usersClass');
-	var result = {};
-	// find all the portal classes that contains the user name
-	userClass.find({ user: user }).toArray(function(err, attendingClasses) {
+	var portalClasses = db.collection('portalClasses');
+	var results = [];
+
+	// get information about myself
+	users.get(db, user, function(err, isUser, me) {
 		if (err) {
 			callback(new Error(err), null);
 			return;
 		}
 
-		result = attendingClasses.map(function(userClassDoc) {
-			// find all the other users in the same portal classes
-			userClass.find({ classStr: userClassDoc.classStr }).toArray(function(err, classmates) {
-				if (err) {
-					callback(new Error(err), null);
-					return;
+		// find all the portal classes that contains the user name
+		portalClasses.find({ userId: me._id }).toArray(function(err, attendingClasses) {
+			if (err) {
+				callback(new Error(err), null);
+				return;
+			}
+
+			asyncLib.map(
+				attendingClasses, 
+				function(portalClassesDoc, classesCb) {
+					// find all the other users in the same portal classes
+					portalClasses.find({ classStr: portalClassesDoc.classStr }).toArray(function(err, classmates) {
+						if (err) {
+							classesCb(new Error(err), null);
+							return;
+						}
+
+						// map the user object to each of my classmates
+						asyncLib.map(
+							classmates,
+							function(portalClassesDoc, classmateCb) {
+								users.getById(db, portalClassesDoc.userId, function(err, isUser, classmate) {
+									if (err) {
+										classmateCb(new Error(err), null);
+										return;
+									}
+
+									classmateCb(null, classmate);
+								});
+							},
+							function(err, classmatesResults) {
+								if (err) {
+									classesCb(new Error(err), null);
+									return;
+								}
+
+								classesCb(null, {
+									classStr: portalClassesDoc.classStr,
+									classmates: classmatesResults
+								});
+							}
+						);
+					});
+				}, 
+				function(err, results) {
+					if (err) {
+						callback(new Error(err), null);
+						return;
+					}
+
+					callback(null, results);
 				}
-
-				return {
-					classStr: userClassDoc.classStr,
-					classmates: classmates.map(function(userClassDoc) {
-						users.get(db, userClassDoc.username, function(user) {
-							return user;
-						});
-					})
-				};
-			});
+			);
 		});
-
-		callback(null, result);
 	});
 }
 
