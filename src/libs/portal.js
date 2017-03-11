@@ -422,6 +422,9 @@ function getClasses(db, user, callback) {
 		callback(new Error('Invalid username!'), null, null);
 		return;
 	}
+	
+	// cached portal classes
+	var portalClasses = db.collection('portalClasses');
 
 	users.get(db, user, function(err, isUser, userDoc) {
 		if(err) {
@@ -438,27 +441,41 @@ function getClasses(db, user, callback) {
 			return;
 		}
 
-		request(userDoc['portalURL'], function(err, response, body) {
-			if(err) {
-				callback(new Error('There was a problem fetching portal data from the URL!'), null, null);
-				return;
-			}
-			if(response.statusCode !== 200) {
-				callback(new Error('Invalid URL!'), null, null);
+		// find all the portal classes that contains the user name
+		portalClasses.find({ userId: userDoc._id }).toArray(function(err, attendingClasses) {
+			if (err) {
+				callback(new Error(err), null, null);
 				return;
 			}
 
-			var data = ical.parseICS(body);
+			// if a cache cannot be found
+			if (attendingClasses.length === 0) {
+				request(userDoc['portalURL'], function(err, response, body) {
+					if(err) {
+						callback(new Error('There was a problem fetching portal data from the URL!'), null, null);
+						return;
+					}
+					if(response.statusCode !== 200) {
+						callback(new Error('Invalid URL!'), null, null);
+						return;
+					}
 
-			// School Portal does not give a 404 if calendar is invalid. Instead, it gives an empty calendar.
-			// Unlike Canvas, the portal is guaranteed to contain some sort of data within a span of a year.
-			if(_.isEmpty(data)) {
-				callback(new Error('Invalid URL!'), null, null);
-				return;
+					var data = ical.parseICS(body);
+
+					// School Portal does not give a 404 if calendar is invalid. Instead, it gives an empty calendar.
+					// Unlike Canvas, the portal is guaranteed to contain some sort of data within a span of a year.
+					if(_.isEmpty(data)) {
+						callback(new Error('Invalid URL!'), null, null);
+						return;
+					}
+
+					parseIcalClasses(data, callback);
+
+				});
+			} else {
+				callback(null, true, attendingClasses);
 			}
-
-			parseIcalClasses(data, callback);
-
+			
 		});
 	});
 }
