@@ -21,7 +21,7 @@ try {
 			if (err) throw new Error(err);
 
 			docs.forEach(function (userDoc) {
-				portal.getClasses(db, userDoc.user, function (err, hasUrl, classes) {
+				portal.getClasses(db, userDoc.user, true, function (err, hasUrl, classes) {
 					if (err) throw new Error(err);
 
 					if (hasUrl) {

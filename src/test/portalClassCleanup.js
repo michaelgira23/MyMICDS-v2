@@ -14,7 +14,7 @@ var user = process.argv[2];
 MongoClient.connect(config.mongodb.uri, function(err, db) {
 	if(err) throw err;
 
-	portal.getClasses(db, user, function(err, hasURL, classes) {
+	portal.getClasses(db, user, false, function(err, hasURL, classes) {
 		if(!classes) throw 'Classes is null!';
 
 		console.log(classes);

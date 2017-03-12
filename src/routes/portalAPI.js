@@ -39,7 +39,7 @@ module.exports = function(app, db, socketIO) {
 	});
 
 	app.post('/portal/get-classes', function(req, res) {
-		portal.getClasses(db, req.user.user, function(err, hasURL, classes) {
+		portal.getClasses(db, req.user.user, false, function(err, hasURL, classes) {
 			if(err) {
 				var errorMessage = err.message;
 			} else {

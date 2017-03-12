@@ -399,6 +399,7 @@ function getDayRotations(callback) {
  *
  * @param {Object} db - Database object
  * @param {string} user - User to get classes from
+ * @param {boolean} noCache - whether to use cache
  * @param {getPortalClassesCallback} callback - Callback
  */
 
@@ -411,7 +412,7 @@ function getDayRotations(callback) {
  * @param {Array} classes - Array of classes from portal. Null if error.
  */
 
-function getClasses(db, user, callback) {
+function getClasses(db, user, noCache, callback) {
 	if(typeof callback !== 'function') return;
 
 	if(typeof db !== 'object') {
@@ -449,7 +450,7 @@ function getClasses(db, user, callback) {
 			}
 
 			// if a cache cannot be found
-			if (attendingClasses.length === 0) {
+			if (attendingClasses.length === 0 || noCache) {
 				request(userDoc['portalURL'], function(err, response, body) {
 					if(err) {
 						callback(new Error('There was a problem fetching portal data from the URL!'), null, null);

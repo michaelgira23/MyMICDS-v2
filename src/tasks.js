@@ -86,10 +86,40 @@ if(config.production) {
 		}, fiveMinuteInterval);
 
 		var groupClasses = later.setInterval(function() {
-			console.log('grouping classes');
-			// TODO modify get calendar function to cache the calendar info (json format) in our db. 
-			// portal.getClasses();
-		})
+			var portalClasses = db.collection('portalClasses');
+			var users = db.collection('users');
+			var docsCount = 0;
+
+			users.find({}, {user: true}).toArray(function (err, docs) {
+				if (err) throw new Error(err);
+
+				docs.forEach(function (userDoc) {
+					// set noCache to false so we dont reuse the cache
+					portal.getClasses(db, userDoc.user, true, function (err, hasUrl, classes) {
+						if (err) throw new Error(err);
+
+						if (hasUrl) {
+							portalClasses.insertMany(
+								// map the array of classes into insert-able documents for Mongo
+								classes.map(function (classStr) {
+									return {
+										userId: userDoc._id,
+										classStr: classStr
+									}
+								}),
+								function (err, result) {
+									if (err) throw new Error(err);
+									docsCount++;
+									if (result.result.ok === 1) {
+										process.stdout.write(`\r inserted ${docsCount} \r`);
+									}
+								}
+							);
+						}
+					});
+				});
+			});
+		}, later.parse.recur().every(12).hour());
 	});
 } else {
 	console.log('Not starting tasks server because we are not on production.');
