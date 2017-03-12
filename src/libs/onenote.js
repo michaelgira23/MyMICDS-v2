@@ -1,4 +1,5 @@
 // MyMICDS notes workflow: client request access token & sign in the user --> using the access token, share .one file with an array of users
+// create a route that catches the token
 
 var OAuth = require('oauth');
 var request = require('request');
@@ -16,14 +17,15 @@ var opn = require('opn');
 /**
  * callback for the sign in method
  * @callback signInCallback
- * @param {boolean} isSuccess - whether the sign in is success or not
+ * @param {object} err - error
  */
 
 function signIn(clientId, redirectUri, scope, callback) {
-	var child = opn(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&scope=${scope}&response_type=token&redirect_uri=${redirectUri}`, { app: 'Chrome' });
-	child.on('exit', function() {
-		console.log('exit');
-		callback(true);
+	var child = opn(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&scope=${scope}&response_type=token&redirect_uri=${redirectUri}`, { app: 'Firefox' }, function(err) {
+		if (err) {
+			callback(err);
+		}
+		callback(null);
 	});
 }
 
