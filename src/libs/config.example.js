@@ -49,5 +49,9 @@ module.exports =
 		'token_uri': 'https://accounts.google.com/o/oauth2/token',
 		'auth_provider_x509_cert_url': 'https://www.googleapis.com/oauth2/v1/certs',
 		'client_x509_cert_url': ''
+	},
+
+	onedrive: {
+		client_id: "9f579f11-455e-4651-aa1e-d38ebe5ca88d",
 	}
 }
