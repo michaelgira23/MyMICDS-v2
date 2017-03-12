@@ -3,9 +3,9 @@
 var config = require(__dirname + '/../libs/config.js');
 var onenote = require(__dirname + '/../libs/onenote.js');
 
-onenote.signIn(config.onedrive.clientId, config.onedrive.redirectUri, 'offline_access files.read', function(err) {
+onenote.signIn(config.microsoft.clientId, config.microsoft.redirectUri, escape('offline_access files.readwrite.all'), function(err) {
 	if (err) {
 		console.log(err);
 	}
-	console.log('succ')
+	console.log('redirect to login page')
 });
