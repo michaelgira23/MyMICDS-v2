@@ -1,3 +1,5 @@
+'use strict'
+
 var config = require(__dirname + '/../libs/config.js');
 var onenote = require(__dirname + '/../libs/onenote.js');
 

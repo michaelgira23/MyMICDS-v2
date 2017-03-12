@@ -1,5 +1,7 @@
+'use strict';
+
 // MyMICDS notes workflow: client request access token & sign in the user --> using the access token, share .one file with an array of users
-// create a route that catches the token
+// create a route that catches the token, so that when sign in is successful, we procceed with sharing notes books and stuff
 
 var OAuth = require('oauth');
 var request = require('request');
