@@ -8,7 +8,7 @@ module.exports = function(app, db) {
 		//get tokens;
 		var code = req.query.code;
 
-		onenote.getTokenFromCode(config.microsoft.clientId, config.microsoft.redirectUri, config.microsoft.clientSercret, code, function(err, token) {
+		onenote.getTokenFromCode(config.microsoft.clientId, config.microsoft.redirectUri, config.microsoft.clientSecret, code, function(err, token) {
 			res.type('json').send(token);
 		});
 	});
