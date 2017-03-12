@@ -52,6 +52,7 @@ module.exports =
 	},
 
 	onedrive: {
-		client_id: "9f579f11-455e-4651-aa1e-d38ebe5ca88d",
+		clientId: "9f579f11-455e-4651-aa1e-d38ebe5ca88d",
+		redirectUri: "https://mymicds.net"
 	}
 }
