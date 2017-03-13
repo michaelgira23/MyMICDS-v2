@@ -11,3 +11,4 @@ src/angular-front-end/node_modules
 jsconfig.json
 .idea
 .vscode
+MSTokens.json
