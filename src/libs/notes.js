@@ -25,7 +25,6 @@ var fs = require('fs');
  */
 
 function signIn(clientId, redirectUri, scope, callback) {
-	opn(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&scope=${scope}&response_type=code&redirect_uri=${redirectUri}`, { app: 'Chrome' });
 	opn(`https://login.live.com/oauth20_authorize.srf?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`, { app: 'Chrome' });
 }
 
