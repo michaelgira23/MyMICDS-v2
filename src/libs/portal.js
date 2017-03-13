@@ -665,6 +665,24 @@ function findClassesByUser(db, user, callback) {
 	});
 }
 
+/**
+ * Find all unique class names
+ * @function findAllClasses
+ * 
+ * @param {object} db 
+ * @param {findAllClassesCallback} callback 
+ */
+
+function findAllClasses(db, callback) {
+	if (typeof db !== 'object') return callback(new Error('db connection incorrect'), null);
+
+	var portalClasses = db.collection('portalClasses');
+
+	portalClasses.distinct('classStr').then(function(classnames) {
+		callback(null, classnames);
+	});
+}
+
 // RegEx
 module.exports.validDayRotation   = validDayRotation;
 module.exports.portalSummaryBlock = portalSummaryBlock;
@@ -681,3 +699,4 @@ module.exports.getDayRotations = getDayRotations;
 module.exports.getClasses      = getClasses;
 module.exports.cleanUp         = cleanUp;
 module.exports.findClassesByUser = findClassesByUser;
+module.exports.findAllClasses  = findAllClasses;

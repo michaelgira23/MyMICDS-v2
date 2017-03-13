@@ -15,7 +15,8 @@ var dailyBulletin = require(__dirname + '/libs/dailyBulletin.js');
 var later         = require('later');
 var MongoClient   = require('mongodb').MongoClient;
 var weather       = require(__dirname + '/libs/weather.js');
-var portal       = require(__dirname + '/libs/portal.js');
+var portal        = require(__dirname + '/libs/portal.js');
+var notes       = require(__dirname + '/libs/notes.js');
 
 // Only run these intervals in production so we don't waste our API calls
 if(config.production) {
@@ -120,6 +121,14 @@ if(config.production) {
 				});
 			});
 		}, later.parse.recur().every(12).hour());
+
+		var addNotebooks = later.setInterval(function() {
+
+		}, later.parse.recur().every(1).day());
+
+		var shareNotebooks = later.setInterval(function() {
+
+		}, later.parse.recur().every(1).day());
 	});
 } else {
 	console.log('Not starting tasks server because we are not on production.');
