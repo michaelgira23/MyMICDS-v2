@@ -147,6 +147,7 @@ function getToken(clientId, redirectUri, clientSecret, callback) {
  * @callback createNotebookCallback
  * 
  * @param {object} err - error object, null if success
+ * @param {boolean} conflict - if there is already a notebook at location
  * @param {object} notebook - response object returned from OneNote api
  */
 function createNotebook(db, authToken, name, callback) {
@@ -164,10 +165,13 @@ function createNotebook(db, authToken, name, callback) {
 		json: true
 	};
 	request(options, function(err, res, body) {
-		if (err) return callback(err, null);
-		if (res.statusCode !== 201) return callback(new Error('Something wrong with the request, code ' + res.statusCode), null)
-		
-		callback(null, body);
+		if (err) return callback(err, null, null);
+
+		if (res.statusCode === 409) return callback(null, true, null);
+
+		if (res.statusCode !== 201) return callback(new Error('Something wrong with the request: ' + res.statusCode + ' ' + res.statusMessage + '\r\n' + body.error.message), null, null)
+
+		callback(null, false, body);
 	});
 }
 

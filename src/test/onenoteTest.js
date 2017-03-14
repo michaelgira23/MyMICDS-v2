@@ -24,12 +24,16 @@ try {
 			portal.findAllClasses(db, function(err, classes) {
 				if (err) throw new Error(err);
 
-				classes.splice(0, 1).forEach(function(classStr) {
+				classes.forEach(function(classStr, index) {
 
-					notes.createNotebook(db, token, classStr + schoolYearStr, function(err, notebook) {
-						if (err) throw new Error(err);
-						console.log(notebook);
-					});
+					var interval = index * 200;
+					setTimeout(function() {
+						notes.createNotebook(db, token, (classStr + schoolYearStr).replace(/[?*\/:<>|']/g, ' '), function(err, conflict, notebook) {
+							if (err) throw new Error(err);
+
+							!conflict ? process.stdout.write('\rnotebook created: ' + index) : process.stdout.write('\rnotebook skipped: ' + index);
+						});
+					}, interval)
 
 				});
 
