@@ -172,7 +172,7 @@ function createNotebook(db, authToken, name, callback) {
 
 		if (res.statusCode === 409) return callback(null, true, null);
 
-		if (res.statusCode !== 201) return callback(new Error('Something wrong with the request: ' + res.statusCode + ' ' + res.statusMessage + '\r\n' + body.error.message), null, null)
+		if (res.statusCode !== 201) return callback(new Error('Something wrong with the request: ' + res.statusCode + ' ' + res.statusMessage + '\r\n' + body ? body.error.message : ''), null, null)
 
 		callback(null, false, body);
 	});
