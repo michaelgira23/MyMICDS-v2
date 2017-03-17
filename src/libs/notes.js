@@ -105,13 +105,15 @@ function getToken(clientId, redirectUri, clientSecret, callback) {
 					'client_id': clientId,
 					'redirect_uri': redirectUri,
 					'client_secret': clientSecret,
-					'refreshToken': tokens.refreshToken,
-					'grant_type': 'refreshToken'
+					'refresh_token': tokens.refreshToken,
+					'grant_type': 'refresh_token'
 				}
 			};
 
 			request(options, function(err, res, body) {
 				if (err) return callback(err, null);
+
+				if (res.statusCode !== 200) return callback(new Error(JSON.parse(body)['error_description']), null);
 
 				body = JSON.parse(body);
 
@@ -122,7 +124,7 @@ function getToken(clientId, redirectUri, clientSecret, callback) {
 					expiresIn: body['expires_in']
 				});
 	
-				fs.writeFile('OneDriveTokens.json', json, function(err) {
+				fs.writeFile(__dirname + '/MSTokens.json', json, function(err) {
 					if (err) return callback(err, null);
 
 					callback(null, body['access_token'])

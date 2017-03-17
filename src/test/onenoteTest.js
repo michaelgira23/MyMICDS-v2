@@ -31,7 +31,22 @@ try {
 						notes.createNotebook(db, token, (classStr + schoolYearStr).replace(/[?*\/:<>|']/g, ' '), function(err, conflict, notebook) {
 							if (err) throw new Error(err);
 
-							!conflict ? process.stdout.write('\rnotebook created: ' + index) : process.stdout.write('\rnotebook skipped: ' + index);
+							if (!conflict) {
+								// prevent "key contains '.'" error
+								delete notebook['@odata.context'];
+
+								var notebooks = db.collection('notebooks');
+								notebooks.insertOne({ 
+										classStr: classStr,
+										notebook: notebook
+									}, function(err) {
+										if (err) throw new Error(err);
+
+										process.stdout.write('\rnotebook created: ' + (index + 1));
+									})
+							} else {
+								process.stdout.write('\rnotebook skipped: ' + (index + 1));
+							}
 						});
 					}, interval)
 
