@@ -36,13 +36,22 @@ try {
 								delete notebook['@odata.context'];
 
 								var notebooks = db.collection('notebooks');
-								notebooks.insertOne({ 
+								notebooks.insertOne({
 										classStr: classStr,
 										notebook: notebook
 									}, function(err) {
 										if (err) throw new Error(err);
 
-										process.stdout.write('\rnotebook created: ' + (index + 1));
+										portal.findUsersByClass(db, classStr, function(err, userIds) {
+											if (err) throw new Error(err);
+
+											notes.shareNotebook(db, token, notebook.id, userIds, function(err, res) {
+												if (err) throw new Error(err);
+
+												console.log(res);
+												process.stdout.write('\rnotebook created: ' + (index + 1));
+											});
+										});
 									})
 							} else {
 								process.stdout.write('\rnotebook skipped: ' + (index + 1));

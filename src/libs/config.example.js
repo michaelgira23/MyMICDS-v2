@@ -55,6 +55,6 @@ module.exports =
 		clientId: '9f579f11-455e-4651-aa1e-d38ebe5ca88d',
 		redirectUri: 'https://api.mymicds.net/microsoft/oauth',
 		clientSecret: '',
-		scopes: 'office.onenote_create wl.offline_access wl.skydrive_update'
+		scopes: 'files.readwrite.all offline_access office.onenote_create'
 	}
 }

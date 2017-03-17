@@ -581,15 +581,15 @@ function cleanUp(str) {
 }
 
 /**
- * Get students that belongs to the same portal class
- * @function getUsersInClass
+ * Get all the class information for a specific user
+ * @function findClassesByUser
  *
  * @param {Object} db - Database object
  * @param {string} user - Username
  * @param {getUsersInClassCallback} callback - callback containing class information
  */
 /**
- * @callback getUsersInClassCallback
+ * @callback findClassesByUserCallback
  *
  * @param {Object} err - Null if success, error object if failure.
  * @param {Array} classes - Object containing an array of users in the class
@@ -666,6 +666,27 @@ function findClassesByUser(db, user, callback) {
 }
 
 /**
+ * @function findUsersByClass
+ * @param {*} db 
+ * @param {*} classStr 
+ * @param {*} callback 
+ */
+function findUsersByClass(db, classStr, callback) {
+	if (typeof db !== 'object') return callback(new Error('db connection incorrect'), null);
+	if (typeof classStr !=='string') return callback(new Error('class info incorrect'), null);
+
+	var portalClasses = db.collection('portalClasses');
+
+	portalClasses.find({ classtr: classStr }).toArray(function(err, docs) {
+		if (err) return callback(new Error(err), null)
+
+		callback(null, docs.map(function(doc) {
+			return doc.userId;
+		}));
+	});
+}
+
+/**
  * Find all unique class names
  * @function findAllClasses
  * 
@@ -700,3 +721,4 @@ module.exports.getClasses      = getClasses;
 module.exports.cleanUp         = cleanUp;
 module.exports.findClassesByUser = findClassesByUser;
 module.exports.findAllClasses  = findAllClasses;
+module.exports.findUsersByClass = findUsersByClass;

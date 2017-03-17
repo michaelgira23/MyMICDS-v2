@@ -8,6 +8,7 @@ var request = require('request');
 var opn = require('opn');
 var moment = require('moment');
 var fs = require('fs');
+var asyncLib = require('async');
 
 /**
  * Function to sign in the MyMCIDS Microsoft accouint
@@ -113,7 +114,7 @@ function getToken(clientId, redirectUri, clientSecret, callback) {
 			request(options, function(err, res, body) {
 				if (err) return callback(err, null);
 
-				if (res.statusCode !== 200) return callback(new Error(JSON.parse(body)['error_description']), null);
+				if (res.statusCode !== 200) return callback(new Error(res.statusCode + ': ' + res.statusMessage + '\r\n' + body['error_description']), null);
 
 				body = JSON.parse(body);
 
@@ -177,8 +178,58 @@ function createNotebook(db, authToken, name, callback) {
 	});
 }
 
-function shareNotebook(name, users) {
+/**
+ * @function shareNotebook
+ * @param {*} db 
+ * @param {*} authToken 
+ * @param {*} notebookId 
+ * @param {*} userIds 
+ * @param {*} callback 
+ */
+function shareNotebook(db, authToken, notebookId, userIds, callback) {
+	asyncLib.map(
+		userIds,
+		function(userId, usersCb) {
+			users.getUserById(db, userId, function(err, user) {
+				if (err) return usersCb(new Error(err), null);
 
+				usersCb(null, user);
+			});
+		}, 
+		function(err, users) {
+			if (err) {
+				callback(new Error(err), null);
+				return;
+			}
+
+			var options = {
+				url: `https://graph.microsoft.com/beta/drive/items/${notebookId}/invite`,
+				method: 'POST',
+				json: true,
+				headers: {
+					'Authorization': 'Bearer ' + authToken
+				},
+				body: {
+					'requireSignIn': false,
+					'sendInvitation': false,
+					'roles': 'write',
+					'recipients': users.map(function(user) {
+						return {
+							'email': user.user + '@micds.org'
+						};
+					}),
+					'message': ''
+				}
+			};
+			request(options, function(err, res, body) {
+				if (err) return callback(err, null);
+
+				if (res.statusCode !== 200) return callback(new Error(res.statusCode + ': ' + res.statusMessage + '\r\nCode: ' + body.error.code + '\r\nMessage: ' + body.error.message), null);
+
+				callback(null, body);
+			});
+		}
+	);
 }
 
 function getOnenoteLink(classStr) {
@@ -187,5 +238,6 @@ function getOnenoteLink(classStr) {
 
 module.exports.signIn = signIn;
 module.exports.createNotebook = createNotebook;
+module.exports.shareNotebook = shareNotebook;
 module.exports.getTokenFromCode = getTokenFromCode;
 module.exports.getToken = getToken;
