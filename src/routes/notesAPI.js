@@ -13,7 +13,6 @@ module.exports = function(app, db) {
 				error: err.message
 			})
 
-
 			res.type('json').send(token);
 		});
 	});

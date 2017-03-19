@@ -19,6 +19,7 @@ var request       = require('request');
 var blockSchedule = require(__dirname + '/blockSchedule.js');
 var url           = require('url');
 var users         = require(__dirname + '/users.js');
+var notes         = require(__dirname + '/../libs/notes.js');
 
 // URL Calendars come from
 var urlPrefix = 'https://micds.myschoolapp.com/podium/feed/iCal.aspx?z=';
@@ -629,7 +630,7 @@ function findClassesByUser(db, user, callback) {
 						asyncLib.map(
 							classmates,
 							function(portalClassesDoc, classmateCb) {
-								users.getById(db, portalClassesDoc.userId, function(err, isUser, classmate) {
+								users.getById(db, portalClassesDoc.userId, function(err, classmate) {
 									if (err) {
 										classmateCb(new Error(err), null);
 										return;
@@ -644,9 +645,17 @@ function findClassesByUser(db, user, callback) {
 									return;
 								}
 
-								classesCb(null, {
-									classStr: portalClassesDoc.classStr,
-									classmates: classmatesResults
+								notes.getOneNoteLink(db, portalClassesDoc.classStr, function(err, link) {
+									if (err) {
+										classesCb(new Error(err), null);
+										return;
+									}
+
+									classesCb(null, {
+										classStr: portalClassesDoc.classStr,
+										classmates: classmatesResults,
+										oneNoteLink: link
+									});
 								});
 							}
 						);
@@ -677,7 +686,7 @@ function findUsersByClass(db, classStr, callback) {
 
 	var portalClasses = db.collection('portalClasses');
 
-	portalClasses.find({ classtr: classStr }).toArray(function(err, docs) {
+	portalClasses.find({ classStr: classStr }).toArray(function(err, docs) {
 		if (err) return callback(new Error(err), null)
 
 		callback(null, docs.map(function(doc) {

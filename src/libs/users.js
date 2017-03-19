@@ -64,15 +64,22 @@ function getUser(db, user, callback) {
  * @param {getUserCallback} callback - Callback
  */
 
+/**
+ * Callback containing user info
+ * @function getUserCallback
+ * @param {object} err - error object, null if success
+ * @param {object} user - the user document
+ */
+
 function getUserById(db, userId, callback) {
 	if(typeof callback !== 'function') return;
 
 	if(typeof db !== 'object') {
-		callback(new Error('Invalid databse connection!'), null, null);
+		callback(new Error('Invalid databse connection!'), null);
 		return;
 	}
 	if(typeof userId !== 'object') {
-		callback(new Error('Invalid user id!'), null, null);
+		callback(new Error('Invalid user id!'), null);
 		return;
 	}
 
@@ -80,13 +87,13 @@ function getUserById(db, userId, callback) {
 	// Query database to find possible user
 	userdata.find({ _id: userId }).toArray(function(err, docs) {
 		if(err) {
-			callback(new Error('There was a problem querying the database!'), null, null);
+			callback(new Error('There was a problem querying the database!'), null);
 			return;
 		}
 		if(docs.length === 0) {
-			callback(null, false, null)
+			callback(new Error('No user can be found under the specified id'), null)
 		} else {
-			callback(null, true, docs[0]);
+			callback(null, docs[0]);
 		}
 
 	});

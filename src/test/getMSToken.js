@@ -10,7 +10,14 @@ var notes = require(__dirname + '/../libs/notes.js');
 // 	console.log('redirect to login page')
 // });
 
-notes.signIn(config.microsoft.clientId, config.microsoft.redirectUri, escape(config.microsoft.scopes), function(err) {
+notes.signIn(config.microsoft.clientId, config.microsoft.redirectUri, escape(config.microsoft.scopes.onedrive), function(err) {
+	if (err) {
+		console.log(err);
+	}
+	console.log('redirect to login page')
+});
+
+notes.signIn(config.microsoft.clientId, config.microsoft.redirectUri, escape(config.microsoft.scopes.onenote), function(err) {
 	if (err) {
 		console.log(err);
 	}

@@ -123,11 +123,52 @@ if(config.production) {
 		}, later.parse.recur().every(12).hour());
 
 		var addNotebooks = later.setInterval(function() {
+			notes.getToken('OneNote', config.microsoft.clientId, config.microsoft.redirectUri, config.microsoft.clientSecret, function(err, ONToken) {
+				if (err) throw new Error(err);
 
-		}, later.parse.recur().every(1).day());
+				notes.getToken('OneDrive', config.microsoft.clientId, config.microsoft.redirectUri, config.microsoft.clientSecret, function(err, ODToken) {
+					if (err) throw new Error(err);
 
-		var shareNotebooks = later.setInterval(function() {
+					portal.findAllClasses(db, function(err, classes) {
+						if (err) throw new Error(err);
 
+						var createCount = 0;
+						var skipCount = 0;
+						var shareCount = 0
+						classes.forEach(function(classStr, index) {
+
+							var interval = index * 200;
+							setTimeout(function() {
+								var notebookName = notes.addYears(classStr);
+								notes.createNotebook(db, ONToken, notebookName, function(err, conflict, notebook) {
+									if (err) throw new Error(err);
+
+									if (!conflict) {
+										process.stdout.write(`\rnotebook created: ${++createCount} | notebook skipped: ${skipCount} | notebook shared: ${shareCount}`);
+									} else {
+										process.stdout.write(`\rnotebook created: ${createCount} | notebook skipped: ${++skipCount} | notebook shared: ${shareCount}`);
+									}
+
+									portal.findUsersByClass(db, classStr, function(err, userIds) {
+										if (err) throw new Error(err);
+
+										var notebookPath = 'Documents/' + notebookName;
+										notes.shareNotebook(db, ODToken, notebookPath, userIds, function(err, res) {
+											if (err) throw new Error(err);
+
+											process.stdout.write(`\rnotebook created: ${createCount} | notebook skipped: ${skipCount} | notebook shared: ${++shareCount}`);
+										});
+									});
+								});
+							}, interval)
+
+						});
+
+					});
+
+				});
+			
+			});
 		}, later.parse.recur().every(1).day());
 	});
 } else {
