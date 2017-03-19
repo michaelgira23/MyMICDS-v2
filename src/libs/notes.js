@@ -269,7 +269,7 @@ function getOneNoteLink(db, classStr, callback) {
 		if (nb.length > 1) {
 			callback(new Error('There seems to be multiple notebooks under the same class name.'), null);
 		} else {
-			callback(null, nb[0].links.oneNoteClientUrl.href);
+			callback(null, nb[0].links);
 		}
 	});
 }

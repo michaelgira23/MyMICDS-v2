@@ -645,7 +645,7 @@ function findClassesByUser(db, user, callback) {
 									return;
 								}
 
-								notes.getOneNoteLink(db, portalClassesDoc.classStr, function(err, link) {
+								notes.getOneNoteLink(db, portalClassesDoc.classStr, function(err, links) {
 									if (err) {
 										classesCb(new Error(err), null);
 										return;
@@ -654,7 +654,7 @@ function findClassesByUser(db, user, callback) {
 									classesCb(null, {
 										classStr: portalClassesDoc.classStr,
 										classmates: classmatesResults,
-										oneNoteLink: link
+										links: links
 									});
 								});
 							}
