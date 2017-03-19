@@ -636,7 +636,7 @@ function findClassesByUser(db, user, callback) {
 										return;
 									}
 
-									classmateCb(null, classmate);
+									classmateCb(null, classmate.firstName + ' ' + classmate.lastName);
 								});
 							},
 							function(err, classmatesResults) {
