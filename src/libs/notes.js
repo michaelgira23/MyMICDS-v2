@@ -18,8 +18,8 @@ var dates = require(__dirname + '/../libs/dates.js');
  * Function to sign in the MyMCIDS Microsoft accouint
  * @function sign-in
  * @param {string} clientId - Microsoft client id for mymicds application.
- * @param {string} redirectUri - The redirect URL that the browser is sent to when authentication is complete. In this case we just need to keep it the same as we configured. 
- * @param {string} scope - The type of access our app is granted whe the user signs in. Avaliable types are: offline_access, files.read, files.read.all, files.readwrite, files.readwrite.all. Will be a space separaeted list. 
+ * @param {string} redirectUri - The redirect URL that the browser is sent to when authentication is complete. In this case we just need to keep it the same as we configured.
+ * @param {string} scope - The type of access our app is granted whe the user signs in. Avaliable types are: offline_access, files.read, files.read.all, files.readwrite, files.readwrite.all. Will be a space separaeted list.
  * @param {signInCallback} callback - Callback
  */
 
@@ -31,25 +31,25 @@ var dates = require(__dirname + '/../libs/dates.js');
 
 function signIn(clientId, redirectUri, scope, callback) {
 	// Once microsoft updates its onenote api to include notes on personal onedrives, we can use the other link
-	// opn(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`, { app: 'Chrome' });
-	opn(`https://login.live.com/oauth20_authorize.srf?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`, { app: 'Chrome' });
+	// opn(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`);
+	opn(`https://login.live.com/oauth20_authorize.srf?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`);
 }
 
 /**
  * get access tokens and refresh tokens from authorization code
  * @function getTokenFromCode
- * 
- * @param {string} clientId 
- * @param {string} redirectUri 
- * @param {string} clientSecret 
- * @param {string} code 
- * @param {getTokenFromCodeCallback} callback 
+ *
+ * @param {string} clientId
+ * @param {string} redirectUri
+ * @param {string} clientSecret
+ * @param {string} code
+ * @param {getTokenFromCodeCallback} callback
  */
 
 /**
  * Callback containing the token information
  * @callback getTokenFromCodeCallback
- * 
+ *
  * @param {object} err - error object, null if success
  * @param {object} tokens - reponse containing tokens
  */
@@ -95,11 +95,11 @@ function getTokenFromCode(clientId, redirectUri, clientSecret, code, callback) {
 
 /**
  * @function getToken
- * 
- * @param {*} clientId 
- * @param {*} redirectUri 
- * @param {*} clientSecret 
- * @param {*} refreshToken 
+ *
+ * @param {*} clientId
+ * @param {*} redirectUri
+ * @param {*} clientSecret
+ * @param {*} refreshToken
  * @param {*} callback
  */
 function getToken(type, clientId, redirectUri, clientSecret, callback) {
@@ -137,7 +137,7 @@ function getToken(type, clientId, redirectUri, clientSecret, callback) {
 					lastEdit: moment().unix(),
 					expiresIn: body['expires_in']
 				});
-	
+
 				fs.writeFile(__dirname + '/' + type + 'Tokens.json', json, function(err) {
 					if (err) return callback(err, null);
 
@@ -151,7 +151,7 @@ function getToken(type, clientId, redirectUri, clientSecret, callback) {
 /**
  * create a onenote notebook under specified name, then store the link to notebook in db
  * @function createNotebook
- * 
+ *
  * @param {object} db - database instance
  * @param {string} authToken - authorization token from the sign in redirect link
  * @param {string} name - name of the notebook
@@ -161,7 +161,7 @@ function getToken(type, clientId, redirectUri, clientSecret, callback) {
 /**
  * callback for createNotebook function
  * @callback createNotebookCallback
- * 
+ *
  * @param {object} err - error object, null if success
  * @param {boolean} conflict - if there is already a notebook at location
  * @param {object} notebook - response object returned from OneNote api
@@ -202,11 +202,11 @@ function createNotebook(db, authToken, name, callback) {
 
 /**
  * @function shareNotebook
- * @param {*} db 
- * @param {*} authToken 
+ * @param {*} db
+ * @param {*} authToken
  * @param {*} notebookPath
- * @param {*} userIds 
- * @param {*} callback 
+ * @param {*} userIds
+ * @param {*} callback
  */
 function shareNotebook(db, authToken, notebookPath, userIds, callback) {
 	asyncLib.map(
@@ -217,7 +217,7 @@ function shareNotebook(db, authToken, notebookPath, userIds, callback) {
 
 				usersCb(null, user);
 			});
-		}, 
+		},
 		function(err, users) {
 			if (err) {
 				callback(new Error(err), null);
@@ -255,10 +255,10 @@ function shareNotebook(db, authToken, notebookPath, userIds, callback) {
 }
 
 /**
- * 
- * @param {*} db 
- * @param {*} classStr 
- * @param {*} callback 
+ *
+ * @param {*} db
+ * @param {*} classStr
+ * @param {*} callback
  */
 function getOneNoteLink(db, classStr, callback) {
 	var notebooks = db.collection('notebooks');
