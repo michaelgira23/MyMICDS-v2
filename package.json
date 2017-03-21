@@ -41,12 +41,10 @@
   "dependencies": {
     "async": "^2.0.1",
     "bcrypt": "^0.8.6",
-    "body-parser": "^1.15.0",
+    "body-parser": "^1.15.2",
     "cheerio": "^0.22.0",
     "cors": "^2.8.0",
-    "deepstream.io": "^2.1.2",
-    "deepstream.io-storage-mongodb": "^1.0.2",
-    "express": "^4.13.4",
+    "express": "^4.14.0",
     "express-jwt": "^5.1.0",
     "forecast.io": "0.0.11",
     "fs-extra": "^1.0.0",
@@ -68,7 +66,7 @@
     "pm2": "^2.0.19",
     "prisma": "^3.1.0",
     "random-js": "^1.0.8",
-    "request": "^2.78.0",
+    "request": "^2.79.0",
     "socket.io": "^1.4.5",
     "underscore": "^1.8.3"
   }

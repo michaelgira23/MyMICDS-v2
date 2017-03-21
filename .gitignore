@@ -1,6 +1,10 @@
 docs
 node_modules
-npm-debug.log
+*.log
+
+.idea
+.vscode
+
 src/api
 src/libs/config.js
 src/libs/OneDriveTokens.json
@@ -9,7 +13,3 @@ src/public/daily-bulletin
 src/public/user-backgrounds/*
 !src/public/user-backgrounds/default
 src/public/json
-src/angular-front-end/node_modules
-jsconfig.json
-.idea
-.vscode
