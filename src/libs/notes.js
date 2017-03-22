@@ -234,7 +234,7 @@ function shareNotebook(db, authToken, notebookPath, userIds, callback) {
 				body: {
 					'requireSignIn': false,
 					'sendInvitation': false,
-					'roles': ['write'],
+					'roles': ['read', 'write'],
 					'recipients': users.map(function(user) {
 						return {
 							'email': user.user + '@micds.org'
