@@ -2,6 +2,7 @@
 
 var notes = require(__dirname + '/../libs/notes.js');
 var config = require(__dirname + '/../libs/config.js');
+var path = require('path');
 var querystring = require('querystring');
 
 module.exports = function(app, db) {
@@ -15,12 +16,12 @@ module.exports = function(app, db) {
 				error: err.message
 			})
 
-			res.type('json').send(token);
+			res.json(token);
 		});
 	});
 
 	app.get('/microsoft/oauth/localhost', function(req, res) {
-		// Redirect maintaining all the query params
-		res.redirect('http://localhost:1420/microsoft/oauth?' + querystring.stringify(req.query));
+		// Send a file that redirects so therefore we can redirect to the _client's_ localhost, not ours.
+		res.sendFile(path.resolve(__dirname + '/../html/oauth-redirect.html'));
 	});
 }

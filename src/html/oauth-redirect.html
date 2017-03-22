@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>MyMICDS - OAuth Redirect</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+
+			body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			h1 {
+				font-family: 'Comic Sans MS';
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Redirecting You To The Locally Hosted Application</h1>
+		<img src="https://mymicds.net/assets/developers/nicks-ugly-face-new.jpg">
+		<script>
+			setTimeout(function() {
+				window.location.replace('http://localhost:1420/microsoft/oauth' + window.location.search);
+			}, 1000);
+		</script>
+	</body>
+</html>
