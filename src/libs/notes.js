@@ -31,7 +31,7 @@ var dates = require(__dirname + '/../libs/dates.js');
 
 function signIn(clientId, redirectUri, scope, callback) {
 	// Once microsoft updates its onenote api to include notes on personal onedrives, we can use the other link
-	// opn(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`);
+	opn(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`);
 	opn(`https://login.live.com/oauth20_authorize.srf?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`);
 }
 
